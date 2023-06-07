@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Storage;
 class MapsController extends Controller
 {
 
-    private function make_request() {
+    private function make_request($longitude, $latitude) {
         $base_url = config('map.base_url');
         $query_parameters = [
             'style' => 'osm-carto',
             'width' => 600,
-            'height' => 400,
-            'center' => 'lonlat:59.563134,36.360594',
+            'height' => 450,
+            'center' => 'lonlat:'.$longitude.','.$latitude,
             'zoom' => 20,
             'apiKey' => config('map.api_key'),
         ];
@@ -33,7 +33,22 @@ class MapsController extends Controller
     }
 
     public function store_one() {
-        Storage::put('example.jpeg', $this->make_request()->body());
 //        return Image::make($this->make_request()->body())->response();
+    }
+
+    public function main() {
+        $first_longitude = $longitude = 59.563134;
+        $first_latitude = $latitude = 36.360594;
+        for($x=0; $x<5; $x++) {
+            for($y=0; $y<5; $y++) {
+//                Storage::put($x . '-' . $y .'.jpeg', $this->make_request($longitude, $latitude)->body());
+                $croppedImage = Image::make($this->make_request($longitude, $latitude)->body());
+                $croppedImage->crop(600, 400);
+                $croppedImage->save(storage_path($x . '-' . $y .'.jpeg'));
+                $longitude += 0.000402;
+            }
+            $longitude = $first_longitude;
+            $latitude -= 0.000217;
+        }
     }
 }
