@@ -13,4 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', ['App\Http\Controllers\MapsController', 'main']);
+Route::get('/', ['App\Http\Controllers\MapsController', 'show_form']);
+Route::post('/', ['App\Http\Controllers\MapsController', 'main'])->name('main.map');
